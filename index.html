@@ -1,90 +1,111 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>vault</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-.vault {
-  font-family: 'Courier New', Courier, monospace;
-  background: #fff; color: #333;
-  max-width: 600px; margin: 0 auto;
-  padding: 1.5rem 1.5rem 3rem;
-  font-size: 16px; line-height: 1.6;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { width: 100%; background: #fff; }
+.vault { font-family: 'Courier New', Courier, monospace; background: #fff; color: #333; max-width: 560px; margin: 0 auto; padding: 1.5rem 1.2rem 4rem; font-size: 15px; line-height: 1.7; }
 .v-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem; }
-.v-wordmark { font-size: 11px; letter-spacing: 0.2em; color: #999; }
-.v-progress { font-size: 10px; color: #ccc; letter-spacing: 0.1em; }
+.v-wordmark { font-size: 12px; letter-spacing: 0.2em; color: #777; }
+.v-progress { font-size: 11px; color: #aaa; letter-spacing: 0.1em; }
 .v-steps { display: flex; gap: 5px; margin-bottom: 2rem; }
 .v-step-dot { height: 2px; flex: 1; background: #eee; transition: background 0.25s; }
 .v-step-dot.done { background: #333; }
-.v-step-dot.active { background: #999; }
+.v-step-dot.active { background: #777; }
 .v-screen { display: none; }
 .v-screen.active { display: block; animation: fadeUp 0.22s ease; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-.v-screen-title { font-size: 10px; letter-spacing: 0.22em; color: #bbb; text-transform: lowercase; margin-bottom: 1.4rem; }
-.v-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 1rem; }
-.v-label { font-size: 10px; color: #bbb; letter-spacing: 0.12em; text-transform: lowercase; margin-bottom: 2px; }
-.v-input { background: none; border: none; border-bottom: 1px solid #ebebeb; font-family: 'Courier New', Courier, monospace; font-size: 14px; color: #333; padding: 4px 0; outline: none; width: 100%; transition: border-color 0.15s; }
+.v-screen-title { font-size: 11px; letter-spacing: 0.22em; color: #aaa; text-transform: lowercase; margin-bottom: 1.4rem; }
+.v-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1.3rem; }
+.v-label { font-size: 11px; color: #aaa; letter-spacing: 0.12em; text-transform: lowercase; }
+.v-input { background: none; border: none; border-bottom: 1px solid #e0e0e0; font-family: 'Courier New', Courier, monospace; font-size: 15px; color: #333; padding: 6px 0; outline: none; width: 100%; transition: border-color 0.15s; }
 .v-input:focus { border-bottom-color: #333; }
-.v-input::placeholder { color: #ddd; }
-textarea.v-input { border: 1px solid #ebebeb; padding: 8px; resize: none; min-height: 60px; }
+.v-input::placeholder { color: #ccc; }
+textarea.v-input { border: 1px solid #e0e0e0; padding: 10px; resize: none; min-height: 70px; }
 textarea.v-input:focus { border-color: #333; }
-textarea.v-input::placeholder { color: #ddd; }
+textarea.v-input::placeholder { color: #ccc; }
 .v-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-.v-type-opts { display: flex; gap: 6px; flex-wrap: wrap; }
-.v-type-btn { border: 1px solid #e8e8e8; padding: 5px 12px; font-family: 'Courier New', Courier, monospace; font-size: 14px; color: #555; cursor: pointer; transition: all 0.12s; background: none; user-select: none; }
-.v-type-btn:hover { border-color: #999; color: #333; }
+.v-type-opts { display: flex; gap: 7px; flex-wrap: wrap; }
+.v-type-btn { border: 1px solid #ddd; padding: 7px 14px; font-family: 'Courier New', Courier, monospace; font-size: 15px; color: #333; cursor: pointer; transition: all 0.12s; background: none; user-select: none; touch-action: manipulation; }
+.v-type-btn:hover { border-color: #777; }
 .v-type-btn.selected { background: #333; color: #fff; border-color: #333; }
-.v-color-opts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 0.3rem; }
-.v-color-swatch { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; user-select: none; }
-.v-swatch-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; transition: all 0.12s; }
-.v-color-swatch:hover .v-swatch-circle { border-color: #999; }
+.v-color-opts { display: flex; gap: 10px; flex-wrap: wrap; padding-top: 0.3rem; }
+.v-color-swatch { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; user-select: none; touch-action: manipulation; }
+.v-swatch-circle { width: 32px; height: 32px; border-radius: 50%; border: 2px solid transparent; transition: all 0.15s; }
+.v-color-swatch:hover .v-swatch-circle { border-color: #777; }
 .v-color-swatch.selected .v-swatch-circle { border-color: #333; }
-.v-swatch-label { font-size: 9px; color: #bbb; letter-spacing: 0.06em; text-align: center; max-width: 44px; line-height: 1.2; }
+.v-swatch-label { font-size: 9px; color: #aaa; letter-spacing: 0.05em; text-align: center; max-width: 48px; line-height: 1.3; }
 .v-color-swatch.selected .v-swatch-label { color: #333; }
-.v-accordion { margin-bottom: 0.8rem; }
-.v-acc-trigger { display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0; border-bottom: 1px solid #ebebeb; cursor: pointer; font-size: 14px; color: #555; user-select: none; }
-.v-acc-trigger .arr { font-size: 8px; transition: transform 0.2s; color: #bbb; }
+.v-result { padding: 1rem 1.1rem; border: 1px solid #e0e0e0; display: flex; align-items: center; gap: 1rem; animation: fadeUp 0.25s ease; margin-top: 0.5rem; }
+.v-result-swatch { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; }
+.v-result-text { font-size: 16px; color: #333; letter-spacing: 0.04em; }
+.v-accordion { margin-bottom: 1rem; }
+.v-acc-trigger { display: flex; justify-content: space-between; align-items: center; padding: 0.65rem 0; border-bottom: 1px solid #e0e0e0; cursor: pointer; font-size: 15px; color: #333; user-select: none; touch-action: manipulation; }
+.v-acc-trigger .arr { font-size: 9px; transition: transform 0.2s; color: #aaa; }
 .v-acc-trigger.open .arr { transform: rotate(180deg); }
-.v-acc-body { display: none; padding: 0.7rem 0 0.3rem; }
+.v-acc-body { display: none; padding: 0.8rem 0 0.4rem; }
 .v-acc-body.open { display: block; }
-.v-divider { border: none; border-top: 1px solid #ebebeb; margin: 1.2rem 0; }
-.v-chips { display: flex; flex-wrap: wrap; gap: 5px; }
-.v-chip { border: 1px solid #e8e8e8; padding: 3px 10px; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #555; cursor: pointer; transition: all 0.12s; user-select: none; background: none; }
-.v-chip:hover { border-color: #999; color: #333; }
+.v-divider { border: none; border-top: 1px solid #ebebeb; margin: 1.3rem 0; }
+.v-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.v-chip { border: 1px solid #ddd; padding: 5px 11px; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #333; cursor: pointer; transition: all 0.15s; user-select: none; background: none; touch-action: manipulation; }
+.v-chip:hover { border-color: #777; }
 .v-chip.selected { background: #333; color: #fff; border-color: #333; }
-.v-chip.solo { font-size: 13px; }
-.v-sub-row { display: none; flex-wrap: wrap; gap: 5px; margin: 6px 0 8px 0; padding: 6px 8px; border-left: 2px solid #f0f0f0; }
+.v-chip.dimmed { opacity: 0.2; }
+.v-chip.dimmed:hover { opacity: 0.45; }
+.v-chip.dimmed.selected { opacity: 1; background: #777; border-color: #777; color: #fff; }
+.v-sub-row { display: none; flex-wrap: wrap; gap: 5px; margin: 7px 0 9px 0; padding: 7px 10px; border-left: 2px solid #f0f0f0; }
 .v-sub-row.open { display: flex; }
-.v-chip.sub { color: #999; border-color: #efefef; font-size: 12px; }
-.v-chip.sub:hover { border-color: #bbb; color: #555; }
+.v-chip.sub { color: #777; border-color: #e8e8e8; font-size: 12px; }
 .v-chip.sub.selected { background: #555; color: #fff; border-color: #555; }
-.v-radio-row { display: flex; gap: 0.7rem; flex-wrap: wrap; }
-.v-radio-row label { display: flex; align-items: center; gap: 4px; font-size: 14px; color: #555; cursor: pointer; }
-.v-radio-row input[type=radio] { accent-color: #333; }
-.v-blic-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 0.4rem 0 1.5rem; }
-.v-blic-col { display: flex; flex-direction: column; align-items: center; gap: 7px; }
-.v-blic-lbl { font-size: 10px; color: #bbb; letter-spacing: 0.12em; }
-.v-blic-opts { display: flex; flex-direction: column; gap: 4px; width: 100%; }
-.v-blic-btn { border: 1px solid #ddd; background: #fafafa; font-family: 'Courier New', Courier, monospace; font-size: 15px; color: #888; padding: 7px 0; cursor: pointer; transition: all 0.12s; width: 100%; text-align: center; }
-.v-blic-btn:hover { border-color: #888; color: #444; background: #f4f4f4; }
+.v-radio-row { display: flex; gap: 0.9rem; flex-wrap: wrap; }
+.v-radio-row label { display: flex; align-items: center; gap: 6px; font-size: 15px; color: #333; cursor: pointer; touch-action: manipulation; padding: 2px 0; }
+.v-radio-row input[type=radio] { accent-color: #333; width: 16px; height: 16px; }
+.v-blic-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin: 0.5rem 0 1.5rem; }
+.v-blic-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.v-blic-lbl { font-size: 10px; color: #aaa; letter-spacing: 0.1em; text-align: center; }
+.v-blic-opts { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+.v-blic-btn { border: 1px solid #ddd; background: #fafafa; font-family: 'Courier New', Courier, monospace; font-size: 16px; color: #888; padding: 9px 0; cursor: pointer; transition: all 0.12s; width: 100%; text-align: center; touch-action: manipulation; }
+.v-blic-btn:hover { border-color: #777; color: #333; }
 .v-blic-btn.selected { background: #333; color: #fff; border-color: #333; }
-.v-verdict { margin-top: 1rem; padding: 1rem; border: 1px solid #ebebeb; text-align: center; }
-.v-verdict-score { font-size: 10px; letter-spacing: 0.2em; color: #bbb; text-transform: lowercase; margin-bottom: 0.3rem; }
-.v-verdict-label { font-size: 18px; color: #333; letter-spacing: 0.04em; }
-.v-cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 0.3rem; }
-.v-cat { border: 1px solid #ebebeb; padding: 0.55rem; text-align: center; font-size: 14px; color: #555; cursor: pointer; transition: all 0.15s; letter-spacing: 0.06em; text-transform: lowercase; user-select: none; }
-.v-cat:hover { border-color: #333; color: #333; }
+.v-verdict { margin-top: 1rem; padding: 1rem; border: 1px solid #e0e0e0; text-align: center; animation: fadeUp 0.3s ease; }
+.v-verdict-score { font-size: 11px; letter-spacing: 0.2em; color: #aaa; text-transform: lowercase; margin-bottom: 0.3rem; }
+.v-verdict-label { font-size: 20px; color: #333; letter-spacing: 0.04em; }
+.v-cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; margin-top: 0.3rem; }
+.v-cat { border: 1px solid #ddd; padding: 0.7rem; text-align: center; font-size: 14px; color: #333; cursor: pointer; transition: all 0.15s; letter-spacing: 0.06em; text-transform: lowercase; user-select: none; touch-action: manipulation; }
+.v-cat:hover { border-color: #333; }
 .v-cat.selected { background: #333; color: #fff; border-color: #333; }
-.v-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #f2f2f2; }
-.v-btn { background: none; font-family: 'Courier New', Courier, monospace; font-size: 12px; letter-spacing: 0.1em; cursor: pointer; padding: 0.5rem 1rem; transition: all 0.15s; text-transform: lowercase; border: 1px solid #e0e0e0; color: #999; }
+.v-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.2rem; border-top: 1px solid #ebebeb; }
+.v-btn { background: none; font-family: 'Courier New', Courier, monospace; font-size: 13px; letter-spacing: 0.1em; cursor: pointer; padding: 0.65rem 1.2rem; transition: all 0.15s; text-transform: lowercase; border: 1px solid #ddd; color: #777; touch-action: manipulation; }
 .v-btn:hover { border-color: #333; color: #333; }
 .v-btn.primary { border-color: #333; color: #333; }
 .v-btn.primary:hover { background: #333; color: #fff; }
-.v-btn.save { border-color: #333; background: #333; color: #fff; }
+.v-btn.save { border-color: #333; background: #333; color: #fff; font-size: 14px; padding: 0.75rem 1.4rem; }
 .v-btn.save:hover { background: #111; }
-.v-btn.ghost { border-color: transparent; color: #ccc; padding-left: 0; }
-.v-btn.ghost:hover { color: #777; border-color: transparent; background: none; }
-.v-toast { display: none; font-size: 12px; color: #999; letter-spacing: 0.1em; text-align: center; margin-top: 0.8rem; }
-</style>
+.v-btn.ghost { border-color: transparent; color: #aaa; padding-left: 0; }
+.v-btn.ghost:hover { color: #333; border-color: transparent; background: none; }
+.v-share-note { margin-top: 1rem; padding: 1rem; border: 1px solid #ebebeb; background: #fafafa; font-size: 12px; color: #777; line-height: 1.7; white-space: pre-wrap; display: none; }
+.v-share-actions { display: flex; gap: 0.6rem; margin-top: 0.8rem; flex-wrap: wrap; }
+.v-share-btn { border: 1px solid #333; background: #333; color: #fff; font-family: 'Courier New', Courier, monospace; font-size: 13px; padding: 0.6rem 1.1rem; cursor: pointer; touch-action: manipulation; letter-spacing: 0.06em; flex: 1; text-align: center; }
+.v-copy-btn { border: 1px solid #ddd; background: none; color: #777; font-family: 'Courier New', Courier, monospace; font-size: 13px; padding: 0.6rem 1.1rem; cursor: pointer; touch-action: manipulation; letter-spacing: 0.06em; flex: 1; text-align: center; }
+.v-copy-btn:hover { border-color: #333; color: #333; }
+.v-toast { font-size: 12px; color: #777; letter-spacing: 0.1em; text-align: center; margin-top: 0.8rem; display: none; }
 
+@media (max-width: 400px) {
+  .vault { padding: 1.2rem 1rem 4rem; }
+  .v-type-btn { padding: 7px 10px; font-size: 14px; }
+  .v-blic-grid { gap: 0.5rem; }
+  .v-blic-btn { font-size: 15px; padding: 8px 0; }
+  .v-blic-lbl { font-size: 9px; }
+  .v-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
 <div class="vault">
   <div class="v-top">
     <span class="v-wordmark">vault</span>
@@ -115,12 +136,25 @@ textarea.v-input::placeholder { color: #ddd; }
       <span class="v-label">color</span>
       <div class="v-color-opts" id="color-opts"></div>
     </div>
-    <div class="v-accordion" style="margin-top:0.4rem;">
+    <div class="v-field" id="intensity-field" style="display:none;">
+      <span class="v-label">intensity</span>
+      <div class="v-radio-row">
+        <label><input type="radio" name="intensity" value="pale" onchange="updateResult()"> pale</label>
+        <label><input type="radio" name="intensity" value="medium" onchange="updateResult()"> medium</label>
+        <label><input type="radio" name="intensity" value="deep" onchange="updateResult()"> deep</label>
+      </div>
+    </div>
+    <div id="v-appearance-result" style="display:none;" class="v-result">
+      <div class="v-result-swatch" id="result-swatch"></div>
+      <div class="v-result-text" id="result-text"></div>
+    </div>
+    <div class="v-divider"></div>
+    <div class="v-accordion">
       <div class="v-acc-trigger" onclick="toggleAcc(this)">
         <span>clarity</span><span class="arr">▼</span>
       </div>
       <div class="v-acc-body">
-        <div class="v-radio-row" style="padding-top:0.4rem;">
+        <div class="v-radio-row">
           <label><input type="radio" name="clarity" value="clear" checked> clear</label>
           <label><input type="radio" name="clarity" value="deposit"> clear with deposit</label>
           <label><input type="radio" name="clarity" value="slight-haze"> slight haze</label>
@@ -135,19 +169,16 @@ textarea.v-input::placeholder { color: #ddd; }
   <!-- 2. NOSE -->
   <div class="v-screen" id="s1">
     <div class="v-screen-title">nose</div>
-
-    <div class="v-label" style="margin-bottom:0.7rem;">primary aromas</div>
+    <div class="v-label" style="margin-bottom:0.8rem;">primary aromas</div>
     <div class="v-chips" id="primary-chips"></div>
     <div id="sub-wrap"></div>
-
     <div class="v-divider"></div>
-
     <div class="v-accordion">
       <div class="v-acc-trigger" onclick="toggleAcc(this)">
         <span>secondary aromas?</span><span class="arr">▼</span>
       </div>
       <div class="v-acc-body">
-        <div style="margin-bottom:0.6rem;">
+        <div style="margin-bottom:0.7rem;">
           <div class="v-chip" id="sec-yeast" onclick="toggleSecSub('yeast')">yeast</div>
           <div class="v-sub-row" id="sub-yeast">
             <div class="v-chip sub" onclick="this.classList.toggle('selected')">bread</div>
@@ -160,7 +191,7 @@ textarea.v-input::placeholder { color: #ddd; }
             <div class="v-chip sub" onclick="this.classList.toggle('selected')">lees</div>
           </div>
         </div>
-        <div style="margin-bottom:0.6rem;">
+        <div style="margin-bottom:0.7rem;">
           <div class="v-chip" id="sec-mlf" onclick="toggleSecSub('mlf')">malolactic conversion</div>
           <div class="v-sub-row" id="sub-mlf">
             <div class="v-chip sub" onclick="this.classList.toggle('selected')">butter</div>
@@ -183,7 +214,6 @@ textarea.v-input::placeholder { color: #ddd; }
         </div>
       </div>
     </div>
-
     <div class="v-accordion">
       <div class="v-acc-trigger" onclick="toggleAcc(this)">
         <span>tertiary aromas?</span><span class="arr">▼</span>
@@ -192,16 +222,12 @@ textarea.v-input::placeholder { color: #ddd; }
         <div class="v-chips" id="tert-chips"></div>
       </div>
     </div>
-
     <div class="v-divider"></div>
-
     <div class="v-field">
       <span class="v-label">smells, whiffs or odors</span>
-      <textarea class="v-input" placeholder="smells like a stable. animalistic. parking lot. whatever lands."></textarea>
+      <textarea class="v-input" id="nose-freetext" placeholder="smells like a stable. animalistic. parking lot. whatever lands."></textarea>
     </div>
-
     <div class="v-divider"></div>
-
     <div class="v-field">
       <span class="v-label">intensity</span>
       <div class="v-radio-row">
@@ -210,7 +236,6 @@ textarea.v-input::placeholder { color: #ddd; }
         <label><input type="radio" name="nose-int" value="pronounced"> pronounced</label>
       </div>
     </div>
-
     <div class="v-nav">
       <button class="v-btn ghost" onclick="go(0)">← back</button>
       <button class="v-btn primary" onclick="go(2)">palate →</button>
@@ -274,7 +299,7 @@ textarea.v-input::placeholder { color: #ddd; }
     <div class="v-divider"></div>
     <div class="v-field">
       <span class="v-label">flavour notes</span>
-      <textarea class="v-input" placeholder="what do you taste…"></textarea>
+      <textarea class="v-input" id="palate-freetext" placeholder="what do you taste…"></textarea>
     </div>
     <div class="v-nav">
       <button class="v-btn ghost" onclick="go(1)">← back</button>
@@ -319,22 +344,20 @@ textarea.v-input::placeholder { color: #ddd; }
         </div>
       </div>
     </div>
-
     <div class="v-verdict" id="v-verdict" style="display:none;">
       <div class="v-verdict-score" id="v-verdict-score"></div>
       <div class="v-verdict-label" id="v-verdict-label"></div>
     </div>
-
     <div class="v-nav">
       <button class="v-btn ghost" onclick="go(2)">← back</button>
       <button class="v-btn primary" onclick="go(4)">specs →</button>
     </div>
   </div>
 
-  <!-- 5. SPECS -->
+  <!-- 5. SPECS + SAVE -->
   <div class="v-screen" id="s4">
     <div class="v-screen-title">specs</div>
-    <div class="v-label" style="margin-bottom:0.5rem;">file as</div>
+    <div class="v-label" style="margin-bottom:0.6rem;">file as</div>
     <div class="v-cats">
       <div class="v-cat" onclick="selectCat(this)">grail</div>
       <div class="v-cat" onclick="selectCat(this)">to buy</div>
@@ -342,71 +365,97 @@ textarea.v-input::placeholder { color: #ddd; }
       <div class="v-cat" onclick="selectCat(this)">unwished-for</div>
     </div>
     <div class="v-divider"></div>
-    <div class="v-field">
-      <span class="v-label">wine</span>
-      <input class="v-input" type="text" placeholder="producer + name">
+    <div class="v-field"><span class="v-label">wine</span><input class="v-input" id="spec-wine" type="text" placeholder="producer + name"></div>
+    <div class="v-row" style="margin-bottom:1rem;">
+      <div class="v-field"><span class="v-label">vintage</span><input class="v-input" id="spec-vintage" type="text" placeholder="year"></div>
+      <div class="v-field"><span class="v-label">region</span><input class="v-input" id="spec-region" type="text" placeholder="appellation"></div>
     </div>
     <div class="v-row" style="margin-bottom:1rem;">
-      <div class="v-field"><span class="v-label">vintage</span><input class="v-input" type="text" placeholder="year"></div>
-      <div class="v-field"><span class="v-label">region</span><input class="v-input" type="text" placeholder="appellation"></div>
-    </div>
-    <div class="v-row" style="margin-bottom:1rem;">
-      <div class="v-field"><span class="v-label">cépage</span><input class="v-input" type="text" placeholder="grape(s)"></div>
-      <div class="v-field"><span class="v-label">abv</span><input class="v-input" type="text" placeholder="%"></div>
+      <div class="v-field"><span class="v-label">cépage</span><input class="v-input" id="spec-cepage" type="text" placeholder="grape(s)"></div>
+      <div class="v-field"><span class="v-label">abv</span><input class="v-input" id="spec-abv" type="text" placeholder="%"></div>
     </div>
     <div class="v-divider"></div>
     <div class="v-label" style="margin-bottom:0.6rem;">memory</div>
-    <div class="v-row" style="margin-bottom:0.8rem;">
-      <div class="v-field"><span class="v-label">where</span><input class="v-input" type="text" placeholder="place"></div>
-      <div class="v-field"><span class="v-label">when</span><input class="v-input" type="text" placeholder="date"></div>
+    <div class="v-row" style="margin-bottom:0.9rem;">
+      <div class="v-field"><span class="v-label">where</span><input class="v-input" id="mem-where" type="text" placeholder="place"></div>
+      <div class="v-field"><span class="v-label">when</span><input class="v-input" id="mem-when" type="text" placeholder="date"></div>
     </div>
-    <div class="v-field"><span class="v-label">with</span><input class="v-input" type="text" placeholder="who"></div>
-    <div class="v-field"><textarea class="v-input" placeholder="anything else worth keeping…"></textarea></div>
+    <div class="v-field"><span class="v-label">with</span><input class="v-input" id="mem-with" type="text" placeholder="who"></div>
+    <div class="v-field"><textarea class="v-input" id="mem-notes" placeholder="anything else worth keeping…"></textarea></div>
     <div class="v-nav">
       <button class="v-btn ghost" onclick="go(3)">← back</button>
-      <button class="v-btn save" onclick="saveNote()">save to vault</button>
+      <button class="v-btn save" onclick="prepareNote()">save to vault</button>
     </div>
-    <div class="v-toast" id="v-toast">— saved to vault —</div>
+
+    <div id="share-section" style="display:none;">
+      <div class="v-divider"></div>
+      <div class="v-share-note" id="share-preview"></div>
+      <div class="v-share-actions">
+        <button class="v-share-btn" onclick="shareNote()">share →</button>
+        <button class="v-copy-btn" onclick="copyNote()">copy</button>
+      </div>
+      <div class="v-toast" id="v-toast">— copied —</div>
+    </div>
   </div>
 </div>
 
 <script>
 let wineType = '';
+let selectedColor = null;
+let selectedHex = null;
+let selectedCat = '';
 const blicScores = { b: null, l: null, i: null, c: null };
+const blicLabels = { b: 'balance', l: 'length', i: 'intensity', c: 'complexity' };
+const blicVals   = { 2: '+', 1: '±', 0: '−' };
+let noteText = '';
 
 const colorData = {
-  white:    [{name:'lemon-green',hex:'#e8f0c0'},{name:'lemon',hex:'#f2e97a'},{name:'gold',hex:'#d4a820'},{name:'deep gold',hex:'#b8860b'},{name:'amber',hex:'#cc7722'},{name:'brown',hex:'#7b4a1e'}],
-  rosé:     [{name:'pale pink',hex:'#f9dde0'},{name:'pink',hex:'#f4a7b2'},{name:'salmon',hex:'#f08070'},{name:'copper',hex:'#c07050'},{name:'orange-pink',hex:'#e8714a'}],
-  red:      [{name:'purple-red',hex:'#5c1a5c'},{name:'ruby',hex:'#9b111e'},{name:'crimson',hex:'#dc143c'},{name:'garnet',hex:'#7b1c30'},{name:'tawny',hex:'#904030'},{name:'brown',hex:'#5c2a14'}],
-  orange:   [{name:'gold',hex:'#d4a820'},{name:'deep gold',hex:'#b8860b'},{name:'amber',hex:'#cc7722'},{name:'copper',hex:'#c07050'},{name:'deep amber',hex:'#a0522d'}],
-  sparkling:[{name:'lemon-green',hex:'#e8f0c0'},{name:'lemon',hex:'#f2e97a'},{name:'gold',hex:'#d4a820'},{name:'pink',hex:'#f4a7b2'},{name:'salmon',hex:'#f08070'}]
+  white:    [{name:'lemon-green',hex:'#deedb0'},{name:'lemon',hex:'#f5e46a'},{name:'gold',hex:'#d4a820'},{name:'amber',hex:'#cc7722'},{name:'brown',hex:'#7b4a1e'}],
+  rosé:     [{name:'pink',hex:'#f4a7b2'},{name:'pink-orange',hex:'#f0846a'},{name:'orange',hex:'#e8623a'}],
+  red:      [{name:'ruby',hex:'#9b111e'},{name:'purple',hex:'#5c1a5c'},{name:'garnet',hex:'#7b1c30'},{name:'tawny',hex:'#904030'},{name:'brown',hex:'#5c2a14'}],
+  orange:   [{name:'gold',hex:'#d4a820'},{name:'tangerine',hex:'#e8802a'},{name:'amber',hex:'#cc7722'},{name:'copper',hex:'#b06030'}],
+  sparkling:[{name:'lemon-green',hex:'#deedb0'},{name:'lemon',hex:'#f5e46a'},{name:'gold',hex:'#d4a820'},{name:'pink',hex:'#f4a7b2'},{name:'salmon',hex:'#f08070'}]
+};
+
+const dimMap = {
+  red:      ['green fruit','citrus','stone','tropical','wet stones','candy'],
+  white:    ['red fruit','black fruit','liquorice'],
+  rosé:     ['black fruit','liquorice'],
+  orange:   ['red fruit','black fruit','liquorice'],
+  sparkling:['red fruit','black fruit','liquorice']
 };
 
 const tertRed   = ['leather','earth','mushroom','meat','bacon','tobacco','wet leaves','forest floor','caramel'];
 const tertWhite = ['petrol','cinnamon','ginger','nutmeg','almond','hazelnut','honey','caramel'];
 
 const primaryData = [
-  { cat:'floral',        subs:['rose','violet','blossom','elderflower','jasmine'] },
-  { cat:'green fruit',   subs:['granny smith apple','pear','gooseberry'] },
-  { cat:'citrus',        subs:['lemon','lime','yuzu','orange','grapefruit'] },
-  { cat:'stone',         subs:['apricot','peach','nectarine'] },
-  { cat:'red fruit',     subs:['strawberry','raspberry','red cherry','red plum','cranberry','red currant'] },
-  { cat:'black fruit',   subs:['blackberry','blueberry','black cherry','black plum','black currant','cassis'] },
-  { cat:'tropical',      subs:['pineapple','banana','lychee','mango','melon','passion fruit'] },
-  { cat:'herbaceous',    subs:['tomato leaf','bay leaf','grass','asparagus'] },
-  { cat:'herbal',        subs:['eucalyptus','mint','fennel','dill','hoja santa'] },
-  { cat:'pyrazine',      subs:['green bell pepper','jalapeño'] },
-  { cat:'spice',         subs:['black pepper','pink pepper','white pepper','clove','anis'] },
-  { cat:'liquorice',     subs:[] },
-  { cat:'fruit ripeness',subs:['unripe','ripe','dried','cooked','jam'] },
-  { cat:'wet stones',    subs:[] },
-  { cat:'candy',         subs:[] },
+  {cat:'floral',        subs:['rose','violet','blossom','elderflower','jasmine']},
+  {cat:'green fruit',   subs:['granny smith apple','pear','gooseberry']},
+  {cat:'citrus',        subs:['lemon','lime','yuzu','orange','grapefruit']},
+  {cat:'stone',         subs:['apricot','peach','nectarine']},
+  {cat:'red fruit',     subs:['strawberry','raspberry','red cherry','red plum','cranberry','red currant']},
+  {cat:'black fruit',   subs:['blackberry','blueberry','black cherry','black plum','black currant','cassis']},
+  {cat:'tropical',      subs:['pineapple','banana','lychee','mango','melon','passion fruit']},
+  {cat:'herbaceous',    subs:['tomato leaf','bay leaf','grass','asparagus']},
+  {cat:'herbal',        subs:['eucalyptus','mint','fennel','dill','hoja santa']},
+  {cat:'pyrazine',      subs:['green bell pepper','jalapeño']},
+  {cat:'spice',         subs:['black pepper','pink pepper','white pepper','clove','anis']},
+  {cat:'liquorice',     subs:[]},
+  {cat:'fruit ripeness',subs:['unripe','ripe','dried','cooked','jam']},
+  {cat:'wet stones',    subs:[]},
+  {cat:'candy',         subs:[]}
 ];
+
+const chipRefs = [];
 
 function selectType(btn, type) {
   wineType = type;
   document.querySelectorAll('.v-type-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
+  selectedColor = null; selectedHex = null;
+  document.getElementById('v-appearance-result').style.display = 'none';
+  document.getElementById('intensity-field').style.display = 'none';
+  document.querySelectorAll('input[name="intensity"]').forEach(r => r.checked = false);
   const field = document.getElementById('color-field');
   const opts = document.getElementById('color-opts');
   field.style.display = 'flex';
@@ -415,33 +464,41 @@ function selectType(btn, type) {
     const sw = document.createElement('div');
     sw.className = 'v-color-swatch';
     sw.innerHTML = `<div class="v-swatch-circle" style="background:${c.hex};"></div><span class="v-swatch-label">${c.name}</span>`;
-    sw.onclick = () => { document.querySelectorAll('.v-color-swatch').forEach(s => s.classList.remove('selected')); sw.classList.add('selected'); };
+    sw.onclick = () => {
+      document.querySelectorAll('.v-color-swatch').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      selectedColor = c.name; selectedHex = c.hex;
+      document.getElementById('intensity-field').style.display = 'flex';
+      updateResult();
+    };
     opts.appendChild(sw);
   });
+  applyDimFilter(type);
   buildTertiary();
 }
 
-function buildTertiary() {
-  const wrap = document.getElementById('tert-chips');
-  wrap.innerHTML = '';
-  const list = (wineType === 'red') ? tertRed : tertWhite;
-  list.forEach(item => {
-    const c = document.createElement('div');
-    c.className = 'v-chip';
-    c.textContent = item;
-    c.onclick = () => c.classList.toggle('selected');
-    wrap.appendChild(c);
-  });
+function updateResult() {
+  const el = document.querySelector('input[name="intensity"]:checked');
+  if (!selectedColor || !el) return;
+  document.getElementById('result-swatch').style.background = selectedHex;
+  document.getElementById('result-text').textContent = el.value + ' ' + selectedColor;
+  document.getElementById('v-appearance-result').style.display = 'flex';
+}
+
+function applyDimFilter(type) {
+  const tooDim = dimMap[type] || [];
+  chipRefs.forEach(({cat, chip}) => chip.classList.toggle('dimmed', tooDim.includes(cat)));
 }
 
 function buildPrimary() {
   const pWrap = document.getElementById('primary-chips');
   const sWrap = document.getElementById('sub-wrap');
-  primaryData.forEach(({ cat, subs }) => {
+  primaryData.forEach(({cat, subs}) => {
     const chip = document.createElement('div');
-    chip.className = 'v-chip' + (subs.length === 0 ? ' solo' : '');
+    chip.className = 'v-chip';
     chip.textContent = cat;
     pWrap.appendChild(chip);
+    chipRefs.push({cat, chip});
     if (subs.length > 0) {
       const subRow = document.createElement('div');
       subRow.className = 'v-sub-row';
@@ -460,6 +517,19 @@ function buildPrimary() {
     } else {
       chip.onclick = () => chip.classList.toggle('selected');
     }
+  });
+}
+
+function buildTertiary() {
+  const wrap = document.getElementById('tert-chips');
+  wrap.innerHTML = '';
+  const list = wineType === 'red' ? tertRed : tertWhite;
+  list.forEach(item => {
+    const c = document.createElement('div');
+    c.className = 'v-chip';
+    c.textContent = item;
+    c.onclick = () => c.classList.toggle('selected');
+    wrap.appendChild(c);
   });
 }
 
@@ -487,19 +557,134 @@ function updateVerdict() {
   const vals = Object.values(blicScores);
   if (vals.some(v => v === null)) return;
   const total = vals.reduce((a, b) => a + b, 0);
-  const labels = ['faulty','faulty','poor','poor','acceptable','acceptable','good','very good','outstanding'];
-  const label = labels[total] || 'outstanding';
-  const scoreEl = document.getElementById('v-verdict-score');
-  const labelEl = document.getElementById('v-verdict-label');
-  const verdictEl = document.getElementById('v-verdict');
-  scoreEl.textContent = total + ' / 8';
-  labelEl.textContent = label;
-  verdictEl.style.display = 'block';
+  const labels = ['faulty','faulty','poor','poor','acceptable','good','very good','outstanding','outstanding'];
+  document.getElementById('v-verdict-score').textContent = total + ' / 8';
+  document.getElementById('v-verdict-label').textContent = labels[total];
+  document.getElementById('v-verdict').style.display = 'block';
 }
 
 function selectCat(el) {
   document.querySelectorAll('.v-cat').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
+  selectedCat = el.textContent;
+}
+
+function getSelected(selector) {
+  return Array.from(document.querySelectorAll(selector + '.selected')).map(el => el.textContent).join(', ');
+}
+
+function r(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : '—';
+}
+
+function prepareNote() {
+  const intensityEl = document.querySelector('input[name="intensity"]:checked');
+  const appearance = intensityEl && selectedColor ? intensityEl.value + ' ' + selectedColor : '—';
+  const clarity = r('clarity');
+
+  const primarySelected = Array.from(document.querySelectorAll('#primary-chips .v-chip.selected')).map(c => {
+    const cat = c.textContent;
+    const subRow = c.nextElementSibling;
+    const subs = subRow ? Array.from(subRow.querySelectorAll('.v-chip.sub.selected')).map(s => s.textContent) : [];
+    return subs.length ? cat + ' (' + subs.join(', ') + ')' : cat;
+  }).join(', ') || '—';
+
+  const secSelected = ['yeast','mlf','oak'].map(key => {
+    const chip = document.getElementById('sec-' + key);
+    if (!chip || !chip.classList.contains('selected')) return null;
+    const subs = Array.from(document.querySelectorAll('#sub-' + key + ' .v-chip.sub.selected')).map(s => s.textContent);
+    return subs.length ? chip.textContent + ' (' + subs.join(', ') + ')' : chip.textContent;
+  }).filter(Boolean).join(', ') || '—';
+
+  const tertSelected = getSelected('#tert-chips .v-chip') || '—';
+  const noseFree = document.getElementById('nose-freetext').value || '—';
+  const noseInt = r('nose-int');
+
+  const blic = Object.entries(blicScores).map(([g, v]) =>
+    blicLabels[g] + ': ' + (v !== null ? blicVals[v] : '—')
+  ).join('  ·  ');
+
+  const blicTotal = Object.values(blicScores).every(v => v !== null)
+    ? Object.values(blicScores).reduce((a, b) => a + b, 0) : null;
+  const blicVerdicts = ['faulty','faulty','poor','poor','acceptable','good','very good','outstanding','outstanding'];
+  const verdict = blicTotal !== null ? blicVerdicts[blicTotal] : '—';
+
+  const wine    = document.getElementById('spec-wine').value || '—';
+  const vintage = document.getElementById('spec-vintage').value || '—';
+  const region  = document.getElementById('spec-region').value || '—';
+  const cepage  = document.getElementById('spec-cepage').value || '—';
+  const abv     = document.getElementById('spec-abv').value || '—';
+  const where   = document.getElementById('mem-where').value || '—';
+  const when    = document.getElementById('mem-when').value || '—';
+  const with_   = document.getElementById('mem-with').value || '—';
+  const memNote = document.getElementById('mem-notes').value || '—';
+  const palFree = document.getElementById('palate-freetext').value || '—';
+
+  noteText =
+`vault — tasting note
+${'─'.repeat(30)}
+${wine}
+${vintage}  ·  ${region}  ·  ${cepage}  ·  ${abv}% abv
+filed as: ${selectedCat || '—'}
+
+appearance
+${'─'.repeat(30)}
+${appearance}  ·  ${clarity}
+
+nose
+${'─'.repeat(30)}
+primary:   ${primarySelected}
+secondary: ${secSelected}
+tertiary:  ${tertSelected}
+—
+${noseFree}
+intensity: ${noseInt}
+
+palate
+${'─'.repeat(30)}
+sweetness: ${r('sweet')}
+acidity:   ${r('acid')}
+tannin:    ${r('tannin')}
+alcohol:   ${r('alc')}
+body:      ${r('body')}
+finish:    ${r('finish')}
+—
+${palFree}
+
+blic
+${'─'.repeat(30)}
+${blic}
+verdict: ${verdict}
+
+memory
+${'─'.repeat(30)}
+${where}  ·  ${when}
+with: ${with_}
+${memNote}`;
+
+  document.getElementById('share-preview').textContent = noteText;
+  document.getElementById('share-preview').style.display = 'block';
+  document.getElementById('share-section').style.display = 'block';
+  document.getElementById('share-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function shareNote() {
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'vault — tasting note', text: noteText });
+    } catch(e) { }
+  } else {
+    copyNote();
+  }
+}
+
+function copyNote() {
+  navigator.clipboard.writeText(noteText).then(() => {
+    const t = document.getElementById('v-toast');
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 2000);
+  });
 }
 
 function go(idx) {
@@ -510,14 +695,11 @@ function go(idx) {
     else if (i === idx) d.classList.add('active');
   });
   document.getElementById('v-prog').textContent = `${idx + 1} / 5`;
-}
-
-function saveNote() {
-  const t = document.getElementById('v-toast');
-  t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 2500);
+  window.scrollTo(0, 0);
 }
 
 buildPrimary();
 buildTertiary();
 </script>
+</body>
+</html>
