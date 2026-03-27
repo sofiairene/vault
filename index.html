@@ -103,12 +103,145 @@ textarea.v-input::placeholder { color: #ccc; }
   .v-blic-lbl { font-size: 9px; }
   .v-row { grid-template-columns: 1fr; }
 }
+
+/* HOME */
+.home { font-family: 'Courier New', Courier, monospace; background: #fff; color: #333; max-width: 560px; margin: 0 auto; padding: 3rem 1.5rem 4rem; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+.home-wordmark { font-size: 11px; letter-spacing: 0.25em; color: #aaa; margin-bottom: 3rem; }
+.home-choices { display: flex; flex-direction: column; gap: 1rem; }
+.home-choice {
+  border: 1px solid #ddd; padding: 1.4rem 1.5rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 18px; color: #333; cursor: pointer;
+  transition: all 0.15s; background: none;
+  text-align: left; touch-action: manipulation;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.home-choice:hover { border-color: #333; }
+.home-choice .home-arr { font-size: 14px; color: #aaa; }
+.home-choice-sub { font-size: 11px; color: #aaa; letter-spacing: 0.06em; margin-top: 4px; display: block; }
+
+/* WORKBOOK */
+.workbook { font-family: 'Courier New', Courier, monospace; background: #fff; color: #333; max-width: 560px; margin: 0 auto; padding: 1.5rem 1.2rem 4rem; display: none; }
+.wb-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2.5rem; }
+.wb-wordmark { font-size: 12px; letter-spacing: 0.2em; color: #777; }
+.wb-back { font-size: 12px; color: #aaa; cursor: pointer; letter-spacing: 0.08em; touch-action: manipulation; border: none; background: none; font-family: 'Courier New', Courier, monospace; }
+.wb-back:hover { color: #333; }
+.wb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.wb-btn {
+  border: 1px solid #ddd; padding: 1.1rem 1rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px; color: #333; cursor: pointer;
+  background: none; text-align: left;
+  transition: all 0.15s; touch-action: manipulation;
+  line-height: 1.5;
+}
+.wb-btn:hover { border-color: #333; }
+.wb-btn.lexicon { grid-column: 1 / -1; border-color: #333; }
+.wb-btn.lexicon:hover { background: #333; color: #fff; }
+.wb-btn-num { font-size: 10px; color: #aaa; letter-spacing: 0.1em; display: block; margin-bottom: 4px; }
+.wb-btn.lexicon .wb-btn-num { color: #777; }
+
+/* LESSON PAGE */
+.lesson-page { font-family: 'Courier New', Courier, monospace; background: #fff; color: #333; max-width: 560px; margin: 0 auto; padding: 1.5rem 1.2rem 4rem; display: none; }
+.lp-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+.lp-wordmark { font-size: 12px; letter-spacing: 0.2em; color: #777; }
+.lp-back { font-size: 12px; color: #aaa; cursor: pointer; letter-spacing: 0.08em; border: none; background: none; font-family: 'Courier New', Courier, monospace; touch-action: manipulation; }
+.lp-back:hover { color: #333; }
+.lp-num { font-size: 10px; letter-spacing: 0.18em; color: #aaa; margin-bottom: 0.3rem; margin-top: 1.5rem; }
+.lp-title { font-size: 18px; color: #333; margin-bottom: 2rem; line-height: 1.4; }
+.lp-divider { border: none; border-top: 1px solid #ebebeb; margin: 1.5rem 0; }
+.lp-section-title { font-size: 10px; letter-spacing: 0.18em; color: #aaa; text-transform: lowercase; margin-bottom: 1rem; }
+.lp-empty { font-size: 13px; color: #ccc; letter-spacing: 0.06em; padding: 1.5rem 0; }
+.lp-grape { margin-bottom: 2rem; }
+.lp-grape-name { font-size: 16px; color: #333; margin-bottom: 0.8rem; border-bottom: 1px solid #ebebeb; padding-bottom: 0.5rem; }
+.lp-grape-body { font-size: 14px; color: #555; line-height: 1.8; }
+.lp-grape-body strong { color: #333; font-weight: normal; text-decoration: underline; text-underline-offset: 3px; }
+.lp-note { font-size: 13px; color: #777; line-height: 1.8; padding: 1rem; border: 1px solid #ebebeb; margin-top: 0.5rem; }
 </style>
 </head>
 <body>
-<div class="vault">
+
+<!-- HOME -->
+<div class="home" id="home">
+  <div class="home-wordmark">vault</div>
+  <div class="home-choices">
+    <button class="home-choice" onclick="showVault()">
+      <div>
+        <span>tasting note</span>
+        <span class="home-choice-sub">sat · blic · save & share</span>
+      </div>
+      <span class="home-arr">→</span>
+    </button>
+    <button class="home-choice" onclick="showWorkbook()">
+      <div>
+        <span>workbook</span>
+        <span class="home-choice-sub">lessons · lexicon · study</span>
+      </div>
+      <span class="home-arr">→</span>
+    </button>
+  </div>
+</div>
+
+<!-- WORKBOOK -->
+<div class="workbook" id="workbook">
+  <div class="wb-top">
+    <span class="wb-wordmark">workbook</span>
+    <button class="wb-back" onclick="showHome()">← home</button>
+  </div>
+  <div class="wb-grid">
+    <button class="wb-btn" onclick="showLesson(1)">
+      <span class="wb-btn-num">lesson 1</span>
+      tasting technique &amp; food pairing
+    </button>
+    <button class="wb-btn" onclick="showLesson(2)">
+      <span class="wb-btn-num">lesson 2</span>
+      factors influencing red · pinot noir · zinfandel
+    </button>
+    <button class="wb-btn" onclick="showLesson(3)">
+      <span class="wb-btn-num">lesson 3</span>
+      factors influencing white, sweet &amp; rosé · riesling · chenin blanc · sémillon · furmint
+    </button>
+    <button class="wb-btn" onclick="showLesson(4)">
+      <span class="wb-btn-num">lesson 4</span>
+      chardonnay · sauvignon blanc · pinot grigio · gewurztraminer · viognier · albariño
+    </button>
+    <button class="wb-btn" onclick="showLesson(5)">
+      <span class="wb-btn-num">lesson 5</span>
+      merlot · cabernet sauvignon · syrah/shiraz
+    </button>
+    <button class="wb-btn" onclick="showLesson(6)">
+      <span class="wb-btn-num">lesson 6</span>
+      gamay · grenache · tempranillo · carmenère · malbec · pinotage
+    </button>
+    <button class="wb-btn" onclick="showLesson(7)">
+      <span class="wb-btn-num">lesson 7</span>
+      cortese · garganega · verdicchio · fiano · nebbiolo · barbera · corvina · sangiovese · montepulciano
+    </button>
+    <button class="wb-btn" onclick="showLesson(8)">
+      <span class="wb-btn-num">lesson 8</span>
+      sparkling &amp; fortified
+    </button>
+    <button class="wb-btn lexicon" onclick="showLesson('lexicon')">
+      <span class="wb-btn-num">reference</span>
+      lexicon
+    </button>
+  </div>
+</div>
+
+<!-- LESSON PAGES -->
+<div class="lesson-page" id="lesson-page">
+  <div class="lp-top">
+    <span class="lp-wordmark">workbook</span>
+    <button class="lp-back" id="lp-back-btn" onclick="showWorkbook()">← workbook</button>
+  </div>
+  <div class="lp-num" id="lp-num"></div>
+  <div class="lp-title" id="lp-title"></div>
+  <div id="lp-content"></div>
+</div>
+
+<div class="vault" id="vault" style="display:none;">
   <div class="v-top">
-    <span class="v-wordmark">vault</span>
+    <span class="v-wordmark" style="cursor:pointer;" onclick="showHome()">vault</span>
     <span class="v-progress" id="v-prog">1 / 5</span>
   </div>
   <div class="v-steps">
@@ -216,7 +349,7 @@ textarea.v-input::placeholder { color: #ccc; }
     </div>
     <div class="v-accordion">
       <div class="v-acc-trigger" onclick="toggleAcc(this)">
-        <span>tertiary aromas?</span><span class="arr">▼</span>
+        <span id="tert-label">tertiary aromas?</span><span class="arr">▼</span>
       </div>
       <div class="v-acc-body">
         <div class="v-chips" id="tert-chips"></div>
@@ -412,7 +545,7 @@ let noteText = '';
 const colorData = {
   white:    [{name:'lemon-green',hex:'#deedb0'},{name:'lemon',hex:'#f5e46a'},{name:'gold',hex:'#d4a820'},{name:'amber',hex:'#cc7722'},{name:'brown',hex:'#7b4a1e'}],
   rosé:     [{name:'pink',hex:'#f4a7b2'},{name:'pink-orange',hex:'#f0846a'},{name:'orange',hex:'#e8623a'}],
-  red:      [{name:'ruby',hex:'#9b111e'},{name:'purple',hex:'#5c1a5c'},{name:'garnet',hex:'#7b1c30'},{name:'tawny',hex:'#904030'},{name:'brown',hex:'#5c2a14'}],
+  red:      [{name:'ruby',hex:'#9b111e'},{name:'crimson',hex:'#c01030'},{name:'garnet',hex:'#7b1c30'},{name:'tawny',hex:'#904030'},{name:'brown',hex:'#5c2a14'}],
   orange:   [{name:'gold',hex:'#d4a820'},{name:'tangerine',hex:'#e8802a'},{name:'amber',hex:'#cc7722'},{name:'copper',hex:'#b06030'}],
   sparkling:[{name:'lemon-green',hex:'#deedb0'},{name:'lemon',hex:'#f5e46a'},{name:'gold',hex:'#d4a820'},{name:'pink',hex:'#f4a7b2'},{name:'salmon',hex:'#f08070'}]
 };
@@ -523,7 +656,10 @@ function buildPrimary() {
 function buildTertiary() {
   const wrap = document.getElementById('tert-chips');
   wrap.innerHTML = '';
-  const list = wineType === 'red' ? tertRed : tertWhite;
+  const isRed = wineType === 'red';
+  const list = isRed ? tertRed : tertWhite;
+  const label = document.getElementById('tert-label');
+  if (label) label.textContent = isRed ? 'tertiary aromas — red?' : wineType ? 'tertiary aromas — white?' : 'tertiary aromas?';
   list.forEach(item => {
     const c = document.createElement('div');
     c.className = 'v-chip';
@@ -557,7 +693,7 @@ function updateVerdict() {
   const vals = Object.values(blicScores);
   if (vals.some(v => v === null)) return;
   const total = vals.reduce((a, b) => a + b, 0);
-  const labels = ['faulty','faulty','poor','poor','acceptable','good','very good','outstanding','outstanding'];
+  const labels = ['faulty','faulty','poor','poor','acceptable','good','good','very good','outstanding'];
   document.getElementById('v-verdict-score').textContent = total + ' / 8';
   document.getElementById('v-verdict-label').textContent = labels[total];
   document.getElementById('v-verdict').style.display = 'block';
@@ -607,7 +743,7 @@ function prepareNote() {
 
   const blicTotal = Object.values(blicScores).every(v => v !== null)
     ? Object.values(blicScores).reduce((a, b) => a + b, 0) : null;
-  const blicVerdicts = ['faulty','faulty','poor','poor','acceptable','good','very good','outstanding','outstanding'];
+  const blicVerdicts = ['faulty','faulty','poor','poor','acceptable','good','good','very good','outstanding'];
   const verdict = blicTotal !== null ? blicVerdicts[blicTotal] : '—';
 
   const wine    = document.getElementById('spec-wine').value || '—';
@@ -697,6 +833,80 @@ function go(idx) {
   document.getElementById('v-prog').textContent = `${idx + 1} / 5`;
   window.scrollTo(0, 0);
 }
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────
+function showHome() {
+  document.getElementById('home').style.display = 'flex';
+  document.getElementById('workbook').style.display = 'none';
+  document.getElementById('lesson-page').style.display = 'none';
+  document.getElementById('vault').style.display = 'none';
+  window.scrollTo(0,0);
+}
+
+function showVault() {
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('vault').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+function showWorkbook() {
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('workbook').style.display = 'block';
+  document.getElementById('lesson-page').style.display = 'none';
+  document.getElementById('vault').style.display = 'none';
+  window.scrollTo(0,0);
+}
+
+function showLesson(id) {
+  document.getElementById('workbook').style.display = 'none';
+  document.getElementById('lesson-page').style.display = 'block';
+  const data = lessonData[id];
+  document.getElementById('lp-num').textContent = id === 'lexicon' ? 'reference' : 'lesson ' + id;
+  document.getElementById('lp-title').textContent = data.title;
+  document.getElementById('lp-content').innerHTML = data.content;
+  window.scrollTo(0,0);
+}
+
+// ── LESSON DATA ─────────────────────────────────────────────────────────────
+// Content will be added lesson by lesson as Per feeds it in.
+const lessonData = {
+  1: {
+    title: 'tasting technique & food pairing',
+    content: `<div class="lp-empty">— content coming soon —</div>`
+  },
+  2: {
+    title: 'factors influencing red wine · pinot noir · zinfandel/primitivo',
+    content: `<div class="lp-empty">— content coming soon —</div>`
+  },
+  3: {
+    title: 'factors influencing white, sweet & rosé · riesling · chenin blanc · sémillon · furmint',
+    content: `<div class="lp-empty">— content coming soon —</div>`
+  },
+  4: {
+    title: 'chardonnay · sauvignon blanc · pinot grigio/gris · gewurztraminer · viognier · albariño',
+    content: `<div class="lp-empty">— content coming soon —</div>`
+  },
+  5: {
+    title: 'merlot · cabernet sauvignon · syrah/shiraz',
+    content: `<div class="lp-empty">— content coming soon —</div>`
+  },
+  6: {
+    title: 'gamay · grenache/garnacha · tempranillo · carmenère · malbec · pinotage',
+    content: `<div class="lp-empty">— content coming soon —</div>`
+  },
+  7: {
+    title: 'cortese · garganega · verdicchio · fiano · nebbiolo · barbera · corvina · sangiovese · montepulciano',
+    content: `<div class="lp-empty">— content coming soon —</div>`
+  },
+  8: {
+    title: 'sparkling & fortified',
+    content: `<div class="lp-empty">— content coming soon —</div>`
+  },
+  lexicon: {
+    title: 'lexicon',
+    content: `<div class="lp-empty">— terms coming soon —</div>`
+  }
+};
 
 buildPrimary();
 buildTertiary();
