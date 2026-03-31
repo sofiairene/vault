@@ -161,7 +161,21 @@ textarea.v-input::placeholder { color: #ccc; }
 .lp-grape-name { font-size: 16px; color: #E8E0D8; margin-bottom: 0.8rem; border-bottom: 1px solid #3A3330; padding-bottom: 0.5rem; }
 .lp-grape-body { font-size: 14px; color: #B0A49E; line-height: 1.8; }
 .lp-grape-body strong { color: #E8E0D8; font-weight: normal; text-decoration: underline; text-underline-offset: 3px; }
-.lp-note { font-size: 13px; color: #8C7B74; line-height: 1.8; padding: 1rem; border: 1px solid #3A3330; margin-top: 0.5rem; }
+.lp-grape-body a { color: #ffffff; text-decoration: underline; text-underline-offset: 3px; }
+
+/* grape card structure */
+.grape-card { margin-bottom: 2.5rem; border-top: 1px solid #3A3330; padding-top: 1.4rem; }
+.grape-card-name { font-size: 18px; color: #E8E0D8; margin-bottom: 1.2rem; letter-spacing: 0.02em; }
+.grape-row { display: grid; grid-template-columns: 130px 1fr; gap: 6px 1rem; margin-bottom: 5px; align-items: baseline; }
+.grape-row-label { font-size: 10px; color: #8C7B74; letter-spacing: 0.12em; text-transform: lowercase; padding-top: 2px; }
+.grape-row-value { font-size: 14px; color: #E8E0D8; line-height: 1.6; }
+.grape-row-value.empty { color: #3A3330; font-size: 12px; letter-spacing: 0.06em; }
+.grape-section { margin-top: 1.2rem; padding-top: 0.8rem; border-top: 1px solid #2A2522; }
+.grape-section-title { font-size: 10px; color: #8C7B74; letter-spacing: 0.15em; text-transform: lowercase; margin-bottom: 0.7rem; }
+.grape-sub-row { display: grid; grid-template-columns: 130px 1fr; gap: 6px 1rem; margin-bottom: 5px; align-items: baseline; }
+.grape-sub-label { font-size: 10px; color: #544C4A; letter-spacing: 0.1em; padding-left: 0.6rem; padding-top: 2px; }
+.grape-sub-value { font-size: 14px; color: #B0A49E; line-height: 1.6; }
+.grape-sub-value.empty { color: #3A3330; font-size: 12px; letter-spacing: 0.06em; }
 </style>
 </head>
 <body>
@@ -198,13 +212,17 @@ textarea.v-input::placeholder { color: #ccc; }
       <span class="wb-btn-num">lesson 1</span>
       tasting technique &amp; food pairing
     </button>
+    <button class="wb-btn" onclick="showLesson('factors')">
+      <span class="wb-btn-num">factors</span>
+      factors influencing wine style &amp; quality
+    </button>
     <button class="wb-btn" onclick="showLesson(2)">
       <span class="wb-btn-num">lesson 2</span>
-      factors influencing red · pinot noir · zinfandel
+      pinot noir · zinfandel/primitivo
     </button>
     <button class="wb-btn" onclick="showLesson(3)">
       <span class="wb-btn-num">lesson 3</span>
-      factors influencing white, sweet &amp; rosé · riesling · chenin blanc · sémillon · furmint
+      riesling · chenin blanc · sémillon · furmint
     </button>
     <button class="wb-btn" onclick="showLesson(4)">
       <span class="wb-btn-num">lesson 4</span>
@@ -269,6 +287,7 @@ textarea.v-input::placeholder { color: #ccc; }
         <div class="v-type-btn" onclick="selectType(this,'red')">red</div>
         <div class="v-type-btn" onclick="selectType(this,'orange')">orange</div>
         <div class="v-type-btn" onclick="selectType(this,'sparkling')">sparkling</div>
+        <div class="v-type-btn" onclick="selectType(this,'fortified')">fortified</div>
       </div>
     </div>
     <div class="v-field" id="color-field" style="display:none;">
@@ -553,7 +572,8 @@ const colorData = {
   rosé:     [{name:'pink',hex:'#f4a7b2'},{name:'pink-orange',hex:'#f0846a'},{name:'orange',hex:'#e8623a'}],
   red:      [{name:'ruby',hex:'#9b111e'},{name:'crimson',hex:'#c01030'},{name:'garnet',hex:'#7b1c30'},{name:'tawny',hex:'#904030'},{name:'brown',hex:'#5c2a14'}],
   orange:   [{name:'gold',hex:'#d4a820'},{name:'tangerine',hex:'#e8802a'},{name:'amber',hex:'#cc7722'},{name:'copper',hex:'#b06030'}],
-  sparkling:[{name:'lemon-green',hex:'#deedb0'},{name:'lemon',hex:'#f5e46a'},{name:'gold',hex:'#d4a820'},{name:'pink',hex:'#f4a7b2'},{name:'salmon',hex:'#f08070'}]
+  sparkling:[{name:'lemon-green',hex:'#deedb0'},{name:'lemon',hex:'#f5e46a'},{name:'gold',hex:'#d4a820'},{name:'pink',hex:'#f4a7b2'},{name:'salmon',hex:'#f08070'}],
+  fortified:[{name:'gold',hex:'#d4a820'},{name:'amber',hex:'#cc7722'},{name:'tawny',hex:'#904030'},{name:'brown',hex:'#7b4a1e'},{name:'ruby',hex:'#9b111e'}]
 };
 
 const dimMap = {
@@ -561,7 +581,8 @@ const dimMap = {
   white:    ['red fruit','black fruit','liquorice'],
   rosé:     ['black fruit','liquorice'],
   orange:   ['red fruit','black fruit','liquorice'],
-  sparkling:['red fruit','black fruit','liquorice']
+  sparkling:['red fruit','black fruit','liquorice'],
+  fortified:[]
 };
 
 const tertRed   = ['leather','earth','mushroom','meat','bacon','tobacco','wet leaves','forest floor','caramel'];
@@ -840,6 +861,54 @@ function go(idx) {
   window.scrollTo(0, 0);
 }
 
+// ── GRAPE CARD BUILDER ───────────────────────────────────────────────────────
+function grapeCard(name, data, hideTertiary) {
+  const v = (val) => val
+    ? `<span class="grape-row-value">${val}</span>`
+    : `<span class="grape-row-value empty">—</span>`;
+  const sv = (val) => val
+    ? `<span class="grape-sub-value">${val}</span>`
+    : `<span class="grape-sub-value empty">—</span>`;
+
+  const handHarvest = data.handHarvested
+    ? `<div class="grape-row"><span class="grape-row-label">hand-harvested</span>${v(data.handHarvested)}</div>`
+    : '';
+
+  const tertiaryRow = hideTertiary ? '' :
+    `<div class="grape-sub-row"><span class="grape-sub-label">tertiary</span>${sv(data.tertiary)}</div>`;
+
+  return `
+<div class="grape-card">
+  <div class="grape-card-name">${name}</div>
+  <div class="grape-row"><span class="grape-row-label">color</span>${v(data.color)}</div>
+  <div class="grape-row"><span class="grape-row-label">origin region</span>${v(data.origin)}</div>
+  <div class="grape-row"><span class="grape-row-label">denominations</span>${v(data.denominations)}</div>
+  <div class="grape-row"><span class="grape-row-label">other regions</span>${v(data.otherRegions)}</div>
+  <div class="grape-row"><span class="grape-row-label">skin</span>${v(data.skin)}</div>
+  ${handHarvest}
+  <div class="grape-section">
+    <div class="grape-section-title">vinification</div>
+    <div class="grape-sub-row"><span class="grape-sub-label">oak</span>${sv(data.oak)}</div>
+    <div class="grape-sub-row"><span class="grape-sub-label">mlf</span>${sv(data.mlf)}</div>
+    <div class="grape-sub-row"><span class="grape-sub-label">maceration</span>${sv(data.maceration)}</div>
+  </div>
+  <div class="grape-section">
+    <div class="grape-section-title">aromas</div>
+    <div class="grape-sub-row"><span class="grape-sub-label">primary</span>${sv(data.primary)}</div>
+    <div class="grape-sub-row"><span class="grape-sub-label">secondary</span>${sv(data.secondary)}</div>
+    ${tertiaryRow}
+  </div>
+</div>`;
+}
+
+function emptyGrape(name) {
+  return grapeCard(name, {}, false);
+}
+
+function youngGrape(name) {
+  return grapeCard(name, {}, true);
+}
+
 // ── NAVIGATION ─────────────────────────────────────────────────────────────
 function hide(id) { document.getElementById(id).style.display = 'none'; }
 function showHome() {
@@ -880,37 +949,176 @@ const lessonData = {
     content: `<div class="lp-empty">— content coming soon —</div>`
   },
   2: {
-    title: 'factors influencing red wine · pinot noir · zinfandel/primitivo',
-    content: `<div class="lp-empty">— content coming soon —</div>`
+    title: 'pinot noir · zinfandel/primitivo',
+    get content() { return [
+      emptyGrape('pinot noir'),
+      emptyGrape('zinfandel / primitivo')
+    ].join(''); }
   },
   3: {
-    title: 'factors influencing white, sweet & rosé · riesling · chenin blanc · sémillon · furmint',
-    content: `<div class="lp-empty">— content coming soon —</div>`
+    title: 'riesling · chenin blanc · sémillon · furmint',
+    get content() { return [
+      emptyGrape('riesling'),
+      emptyGrape('chenin blanc'),
+      emptyGrape('sémillon'),
+      emptyGrape('furmint')
+    ].join(''); }
   },
   4: {
     title: 'chardonnay · sauvignon blanc · pinot grigio/gris · gewurztraminer · viognier · albariño',
-    content: `<div class="lp-empty">— content coming soon —</div>`
+    get content() { return [
+      emptyGrape('chardonnay'),
+      emptyGrape('sauvignon blanc'),
+      youngGrape('pinot grigio / gris'),
+      youngGrape('gewurztraminer'),
+      youngGrape('viognier'),
+      youngGrape('albariño')
+    ].join(''); }
   },
   5: {
     title: 'merlot · cabernet sauvignon · syrah/shiraz',
-    content: `<div class="lp-empty">— content coming soon —</div>`
+    get content() { return [
+      emptyGrape('merlot'),
+      emptyGrape('cabernet sauvignon'),
+      emptyGrape('syrah / shiraz')
+    ].join(''); }
   },
   6: {
     title: 'gamay · grenache/garnacha · tempranillo · carmenère · malbec · pinotage',
-    content: `<div class="lp-empty">— content coming soon —</div>`
+    get content() { return [
+      youngGrape('gamay'),
+      emptyGrape('grenache / garnacha'),
+      emptyGrape('tempranillo'),
+      emptyGrape('carmenère'),
+      emptyGrape('malbec'),
+      emptyGrape('pinotage')
+    ].join(''); }
   },
   7: {
     title: 'cortese · garganega · verdicchio · fiano · nebbiolo · barbera · corvina · sangiovese · montepulciano',
-    content: `<div class="lp-empty">— content coming soon —</div>`
+    get content() { return [
+      youngGrape('cortese'),
+      youngGrape('garganega'),
+      youngGrape('verdicchio'),
+      youngGrape('fiano'),
+      emptyGrape('nebbiolo'),
+      youngGrape('barbera'),
+      emptyGrape('corvina'),
+      emptyGrape('sangiovese'),
+      youngGrape('montepulciano')
+    ].join(''); }
   },
   8: {
     title: 'sparkling & fortified',
     content: `<div class="lp-empty">— content coming soon —</div>`
   },
+  factors: {
+    title: 'factors influencing wine style and quality',
+    content: `
+<div class="lp-grape">
+  <div class="lp-grape-name">climate</div>
+  <div class="lp-grape-body">The long-term pattern of weather and the classification for the amount of heat during the growing season depending on hemispheres.
+    <br><br>∙ <strong>Cool</strong> — 16.5°C and below
+    <br>∙ <strong>Moderate</strong> — 16.5 to 18.5°C
+    <br>∙ <strong>Warm</strong> — 18.5 to 21°C
+  </div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">latitude</div>
+  <div class="lp-grape-body">The factor influencing a wine region's climate. Most vineyards are located between 30 degrees and 50 degrees north or south of the equator.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">altitude</div>
+  <div class="lp-grape-body">Temperatures drop with altitude, affording a cooler climate.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">seas</div>
+  <div class="lp-grape-body">Regions can benefit from cooling ocean currents like in South Africa's Cape, or a warming influence in northern Europe.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">rivers</div>
+  <div class="lp-grape-body">Providing warmth in cooler regions, helping prevent against frosts. Can also reflect sunlight to help the grapes ripen.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">air</div>
+  <div class="lp-grape-body">Regulate temperatures from warmer to cooler temperatures.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">cloud, fog and mist</div>
+  <div class="lp-grape-body"><div class="lp-empty" style="padding:0;">— content coming soon —</div></div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">mountains</div>
+  <div class="lp-grape-body"><div class="lp-empty" style="padding:0;">— content coming soon —</div></div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">slope and aspect</div>
+  <div class="lp-grape-body"><div class="lp-empty" style="padding:0;">— content coming soon —</div></div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">soil</div>
+  <div class="lp-grape-body"><div class="lp-empty" style="padding:0;">— content coming soon —</div></div>
+</div>
+
+<div class="lp-divider"></div>
+<div class="lp-section-title">vintage conditions</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">hot vintages</div>
+  <div class="lp-grape-body"><div class="lp-empty" style="padding:0;">— content coming soon —</div></div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">cool vintages</div>
+  <div class="lp-grape-body"><div class="lp-empty" style="padding:0;">— content coming soon —</div></div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">drought</div>
+  <div class="lp-grape-body"><div class="lp-empty" style="padding:0;">— content coming soon —</div></div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">high levels of rain</div>
+  <div class="lp-grape-body"><div class="lp-empty" style="padding:0;">— content coming soon —</div></div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">hail</div>
+  <div class="lp-grape-body"><div class="lp-empty" style="padding:0;">— content coming soon —</div></div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">frost</div>
+  <div class="lp-grape-body"><div class="lp-empty" style="padding:0;">— content coming soon —</div></div>
+</div>
+`
+  },
   lexicon: {
     title: 'lexicon',
     content: `
-<div class="lp-section-title">vitis — the vine & the grape</div>
+<div class="lp-note" style="margin-bottom:2rem;">
+  <strong style="color:#E8E0D8;">sources</strong><br>
+  WSET Level 2 Award in Wines — study materials<br>
+  <em>Natural Wine for the People</em>, Alice Feiring, 2019
+</div>
+
+<div class="lp-divider"></div>
+<div class="v-accordion">
+<div class="v-acc-trigger" onclick="toggleAcc(this)" style="border-bottom:1px solid #3A3330;">
+  <span style="font-size:11px;letter-spacing:0.18em;color:#8C7B74;text-transform:lowercase;">vitis — the vine &amp; the grape</span>
+  <span class="arr" style="color:#8C7B74;">▼</span>
+</div>
+<div class="v-acc-body">
 
 <div class="lp-grape">
   <div class="lp-grape-name">vitis vinifera</div>
@@ -955,6 +1163,42 @@ const lessonData = {
 <div class="lp-grape">
   <div class="lp-grape-name">dormancy of vines</div>
   <div class="lp-grape-body">The period of rest a vine undergoes during winter, after the leaves have dropped and before budbreak in spring. During dormancy, the vine draws its energy inward, storing carbohydrates in the trunk and roots. This phase is essential for the vine's annual cycle and makes it more resistant to cold temperatures. Dormancy is broken when soil temperatures rise sufficiently in early spring, triggering budbreak.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">terroir</div>
+  <div class="lp-grape-body">The complete natural environment in which a wine is produced and the way that environment expresses itself in the wine: climate, soil, topography, microclimate.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">vigneron</div>
+  <div class="lp-grape-body">French — winemaker but also one who farms the vine.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">picking</div>
+  <div class="lp-grape-body">Climate change is mucking around with the old truism that one hundred days after the vine flowers, the farmer is ready to pick.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">irrigation</div>
+  <div class="lp-grape-body">Watering. Flood irrigation of old or precision drip irrigation of today.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">5 ways of farming</div>
+  <div class="lp-grape-body">
+    <strong>Conventional</strong> — synthetic addition; herbicides and pesticides.<br><br>
+    <strong>Sustainable</strong> — spraying when necessary, or lutte raisonnée.<br><br>
+    <strong>Organic</strong> — animal, vegetable or mineral origin for pesticides and fertilizers.<br><br>
+    <strong>Biodynamic</strong> — developed by Rudolf Steiner, this practice borrows pages from the ancients and takes a spiritual and homeopathic attitude toward agriculture. Pace the farming to nature's rhythms.<br><br>
+    <strong>Natural</strong> — close to permaculture practices or "do-nothing agriculture" inspired by the farmer and philosopher Masanobu Fukuoka.
+  </div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">lutte raisonnée</div>
+  <div class="lp-grape-body">(French — "reasoned struggle") — a viticultural philosophy that sits between conventional and organic farming. "Farming by common sense."</div>
 </div>
 
 <div class="lp-grape">
@@ -1007,12 +1251,42 @@ const lessonData = {
   <div class="lp-grape-body">A tasting descriptor used to indicate a saline, mineral quality in a wine, often associated with vineyards situated near the sea or ocean. The salt air and maritime soils of coastal regions can impart a subtle briny or oyster-shell quality to the wine. It is particularly noted in wines from coastal appellations — a hallmark of <a href="#" onclick="showLesson(4);return false;">albariño</a> from Rías Baixas in Galicia, Spain, where the Atlantic influence is strong.</div>
 </div>
 
-<div class="lp-divider"></div>
-<div class="lp-section-title">vinification — in the winery</div>
+</div>
+</div>
+
+<div class="v-accordion">
+<div class="v-acc-trigger" onclick="toggleAcc(this)" style="border-bottom:1px solid #3A3330;">
+  <span style="font-size:11px;letter-spacing:0.18em;color:#8C7B74;text-transform:lowercase;">vinification — in the winery</span>
+  <span class="arr" style="color:#8C7B74;">▼</span>
+</div>
+<div class="v-acc-body">
 
 <div class="lp-grape">
-  <div class="lp-grape-name">fermentation process</div>
-  <div class="lp-grape-body">The conversion of grape sugars into alcohol and carbon dioxide by yeast. Alcoholic fermentation is the fundamental transformation at the heart of all winemaking. Yeast — either naturally present on grape skins or added by the winemaker — metabolises the sugars (glucose and fructose) in the grape must, producing ethanol, CO₂, and heat as by-products. The winemaker controls temperature, vessel type, and yeast selection to shape the style and character of the finished wine.</div>
+  <div class="lp-grape-name">fermentation</div>
+  <div class="lp-grape-body">Fermentation is transformation — the process in which yeast gobbles up the wine's sugar and converts it into alcohol and carbon dioxide.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">destemming</div>
+  <div class="lp-grape-body">Stems often add certain spicy aromatic flavors and tannins. Destemming often employed to achieve more direct, pure flavors. To destem, grapes are put through a mechanical destemmer, picked off the stems by hands, or use a straw sieve, as they do in many domaines of the Jura region.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">to crush or not</div>
+  <div class="lp-grape-body">Whole cluster can be vinified by carbonic maceration, but destemming and crushing are the most common. When crushing, the winemaker chooses a vertical press or horizontal crusher. Ex: Georgia, foot-crush.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">skin contact</div>
+  <div class="lp-grape-body">Grapes' skin determines tannin and color.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">sulfur</div>
+  <div class="lp-grape-body">Sulfur dioxide (SO₂) is one of winemaking's oldest and most universal tools — used for preservation, sanitation, and stability.
+    <br><br>∙ <strong>Free SO₂</strong> — the active, protective portion
+    <br>∙ <strong>Bound SO₂</strong> — attached to compounds like acetaldehyde, no longer protective
+    <br><br>The winemaker manages free SO₂ levels throughout the process.</div>
 </div>
 
 <div class="lp-grape">
@@ -1022,27 +1296,32 @@ const lessonData = {
 
 <div class="lp-grape">
   <div class="lp-grape-name">open tank fermentation</div>
-  <div class="lp-grape-body">A fermentation method where grapes are fermented in an open-top vessel, exposing the must to the air. During red wine fermentation, the grape skins float to the surface forming a cap, which is regularly pushed down (punched down) by hand or by pump to extract colour and tannin and to prevent the cap from drying out. Open tank fermentation allows greater oxygen contact and hands-on management of extraction, and is common in traditional red wine production.</div>
+  <div class="lp-grape-body">A fermentation method where grapes are fermented in an open-top vessel, exposing the must to the air. During red wine fermentation, the grape skins float to the surface forming a cap, which is regularly pushed down by hand or by pump to extract colour and tannin and to prevent the cap from drying out. Open tank fermentation allows greater oxygen contact and hands-on management of extraction, and is common in traditional red wine production.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">closed tank fermentation</div>
-  <div class="lp-grape-body">A fermentation method where the vessel is sealed, limiting oxygen contact. The cap of grape skins is managed by pumping fermenting juice from the bottom of the tank and spraying it over the top — a process called pumping over (remontage). Closed tanks offer better temperature control and hygiene, and are widely used in modern, larger-scale winemaking. They tend to produce wines with cleaner, more fruit-forward profiles than open-top fermentation.</div>
+  <div class="lp-grape-body">A fermentation method where the vessel is sealed, limiting oxygen contact. The cap of grape skins is managed by pumping fermenting juice from the bottom of the tank and spraying it over the top — a process called pumping over (remontage). Closed tanks offer better temperature control and hygiene, and are widely used in modern, larger-scale winemaking.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">maceration</div>
-  <div class="lp-grape-body">The process of leaving grape skins in contact with the juice or fermenting must, allowing colour, tannin, and flavour compounds to be extracted from the skins into the wine. In red winemaking, maceration happens during fermentation and is essential for building colour and structure. In white and orange winemaking, skin contact maceration is a deliberate stylistic choice that adds texture, tannin, and complexity. The length and temperature of maceration are key tools in shaping a wine's style.</div>
+  <div class="lp-grape-body">The process of leaving grape skins in contact with the juice or fermenting must, allowing colour, tannin, and flavour compounds to be extracted from the skins into the wine. In red winemaking, maceration happens during fermentation and is essential for building colour and structure. In white and orange winemaking, skin contact maceration is a deliberate stylistic choice that adds texture, tannin, and complexity.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">vatting time</div>
-  <div class="lp-grape-body">The total duration that grape skins remain in contact with the wine in the fermentation vessel. Longer vatting times extract more tannin, colour, and structural compounds; shorter times produce lighter, more fruit-forward wines with less grip. Vatting time is one of the winemaker's most important decisions in red wine production, directly influencing the wine's body, ageing potential, and overall style.</div>
+  <div class="lp-grape-body">The total duration that grape skins remain in contact with the wine in the fermentation vessel. Longer vatting times extract more tannin, colour, and structural compounds; shorter times produce lighter, more fruit-forward wines with less grip. Vatting time is one of the winemaker's most important decisions in red wine production.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">malolactic conversion</div>
-  <div class="lp-grape-body">A secondary bacterial process — not a true fermentation — in which sharp malic acid naturally present in grapes is converted into softer lactic acid by lactic acid bacteria. This reduces the wine's overall acidity, adds roundness and a rounder texture, and can contribute creamy or buttery notes. Malolactic conversion is almost universal in red wines and is commonly used in full-bodied whites such as <a href="#" onclick="showLesson(4);return false;">chardonnay</a>, but is often avoided in aromatic whites where freshness and acidity are essential to the style.</div>
+  <div class="lp-grape-body">Alcoholic fermentation transforms the wine's sugar into alcohol, but this secondary fermentation transforms the edgy and apple-y malic acid into softer lactic acid.</div>
+</div>
+
+<div class="lp-grape">
+  <div class="lp-grape-name">lees</div>
+  <div class="lp-grape-body">After fermentation, the dead yeast cells become a silty material called lees (undesirable: gross lees and desirable: fine lees).</div>
 </div>
 
 <div class="lp-grape">
@@ -1052,93 +1331,109 @@ const lessonData = {
 
 <div class="lp-grape">
   <div class="lp-grape-name">bâtonnage</div>
-  <div class="lp-grape-body">The practice of stirring the lees back into suspension during the ageing period, using a long stick or paddle (bâton). Rather than allowing the lees to settle, bâtonnage keeps them in contact with the wine, accelerating autolysis and increasing the texture and richness of the finished wine. It is most associated with barrel-aged <a href="#" onclick="showLesson(4);return false;">chardonnay</a> from Burgundy, where it contributes to the variety's characteristic creamy, full-bodied style.</div>
+  <div class="lp-grape-body">The practice of stirring the lees back into suspension during the ageing period, using a long stick or paddle (bâton). Rather than allowing the lees to settle, bâtonnage keeps them in contact with the wine, accelerating autolysis and increasing the texture and richness of the finished wine. It is most associated with barrel-aged <a href="#" onclick="showLesson(4);return false;">chardonnay</a> from Burgundy.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">no residual sugar</div>
-  <div class="lp-grape-body">A wine described as having no residual sugar has undergone complete fermentation — all grape sugars have been converted to alcohol by yeast, leaving the wine bone dry. Residual sugar is measured in grams per litre (g/l); a truly dry wine typically contains less than 2 g/l. The absence of residual sugar means sweetness on the palate comes only from ripe fruit, alcohol, or glycerol — not from unconverted sugar.</div>
+  <div class="lp-grape-body">A wine described as having no residual sugar has undergone complete fermentation — all grape sugars have been converted to alcohol by yeast, leaving the wine bone dry. Residual sugar is measured in grams per litre (g/l); a truly dry wine typically contains less than 2 g/l.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">appassimento</div>
-  <div class="lp-grape-body">A traditional Italian drying technique in which harvested grapes are laid on mats or hung in drying lofts to dehydrate slowly over several months. As water evaporates, sugars, acidity, and flavour compounds become highly concentrated. The resulting must produces wines of exceptional richness and depth. The most celebrated example is Amarone della Valpolicella, made from dried <a href="#" onclick="showLesson(7);return false;">corvina</a> grapes in the Veneto region of northeast Italy.</div>
+  <div class="lp-grape-body">A traditional Italian drying technique in which harvested grapes are laid on mats or hung in drying lofts to dehydrate slowly over several months. As water evaporates, sugars, acidity, and flavour compounds become highly concentrated. The most celebrated example is Amarone della Valpolicella, made from dried <a href="#" onclick="showLesson(7);return false;">corvina</a> grapes in the Veneto region of northeast Italy.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">vendanges tardives</div>
-  <div class="lp-grape-body">A French term meaning late harvest. Grapes are left on the vine beyond the normal harvest date, allowing them to accumulate higher sugar levels through extended ripening or the onset of noble rot. The resulting wines range from richly off-dry to lusciously sweet, with concentrated fruit and good natural acidity to balance the residual sugar. The term is most closely associated with Alsace, France.</div>
+  <div class="lp-grape-body">Late harvest.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">ethyl acetate</div>
-  <div class="lp-grape-body">A wine fault detectable as a sharp, pungent aroma reminiscent of nail polish remover or solvent. It is produced when acetic acid bacteria interact with ethanol in the presence of oxygen, forming ethyl acetate as a by-product. At low levels it may add a subtle lift; at higher concentrations it is considered a significant fault that overwhelms the wine's fruit and renders it unpleasant. It often occurs alongside volatile acidity.</div>
+  <div class="lp-grape-body">A wine fault detectable as a sharp, pungent aroma reminiscent of nail polish remover or solvent. It is produced when acetic acid bacteria interact with ethanol in the presence of oxygen. At low levels it may add a subtle lift; at higher concentrations it is considered a significant fault. It often occurs alongside volatile acidity.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">volatile acidity</div>
-  <div class="lp-grape-body">A tasting fault caused by an excess of acetic acid in the wine, detectable as a sharp, vinegary aroma or taste. All wines contain trace amounts of volatile acidity, which is a natural by-product of fermentation; it only becomes a fault when levels are high enough to be detected on the nose or palate. It is caused by bacterial activity — typically acetobacter — often resulting from poor hygiene or excessive oxygen exposure during winemaking or storage.</div>
+  <div class="lp-grape-body">A tasting fault caused by an excess of acetic acid in the wine, detectable as a sharp, vinegary aroma or taste. All wines contain trace amounts as a natural by-product of fermentation; it only becomes a fault when levels are high enough to be detected on the nose or palate.</div>
 </div>
 
-<div class="lp-divider"></div>
-<div class="lp-section-title">ageing — oak & time</div>
+</div>
+</div>
+
+<div class="v-accordion">
+<div class="v-acc-trigger" onclick="toggleAcc(this)" style="border-bottom:1px solid #3A3330;">
+  <span style="font-size:11px;letter-spacing:0.18em;color:#8C7B74;text-transform:lowercase;">ageing — oak &amp; time</span>
+  <span class="arr" style="color:#8C7B74;">▼</span>
+</div>
+<div class="v-acc-body">
 
 <div class="lp-grape">
   <div class="lp-grape-name">french oak</div>
-  <div class="lp-grape-body">Oak sourced primarily from forests in central France — Allier, Tronçais, Vosges, and Nevers are the most prized. French oak has a tighter grain than American oak, which means it imparts flavour more slowly and subtly. The primary contributions are vanilla, spice, cedar, and hazelnut notes, along with fine-grained tannins that integrate well with the wine over time. French oak is widely considered more elegant and restrained than American oak and is the preferred choice for premium wine production worldwide.</div>
+  <div class="lp-grape-body">Oak sourced primarily from forests in central France — Allier, Tronçais, Vosges, and Nevers are the most prized. French oak has a tighter grain than American oak, imparting flavour more slowly and subtly. The primary contributions are vanilla, spice, cedar, and hazelnut notes, along with fine-grained tannins. Widely considered more elegant and restrained than American oak.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">american oak</div>
-  <div class="lp-grape-body">Oak sourced primarily from the United States, particularly from Missouri and Minnesota. American oak has a wider grain than French oak and releases its flavour compounds more rapidly and more boldly. It is associated with pronounced vanilla, coconut, dill, and sweet spice notes. American oak has historically been closely linked to <a href="#" onclick="showLesson(6);return false;">tempranillo</a>-based Rioja, where extended ageing in American oak is a defining feature of the traditional style.</div>
+  <div class="lp-grape-body">Oak sourced primarily from the United States. American oak has a wider grain than French oak and releases its flavour compounds more rapidly and boldly. Associated with pronounced vanilla, coconut, dill, and sweet spice notes. Historically closely linked to <a href="#" onclick="showLesson(6);return false;">tempranillo</a>-based Rioja, where extended ageing in American oak is a defining feature of the traditional style.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">oak chips / oak staves</div>
-  <div class="lp-grape-body">Alternatives to barrel ageing used to impart oak-derived flavours more quickly and at significantly lower cost. Chips or staves are submerged directly in wine held in inert stainless steel tanks. The flavour effect can broadly mimic barrel ageing — adding vanilla, toast, and spice — but lacks the slow micro-oxygenation that barrels provide through their porous staves. This micro-oxygenation is what softens tannins and builds complexity over time, something oak chips and staves cannot replicate.</div>
+  <div class="lp-grape-body">Alternatives to barrel ageing used to impart oak-derived flavours more quickly and at significantly lower cost. Chips or staves are submerged directly in wine held in inert stainless steel tanks. The flavour effect can broadly mimic barrel ageing but lacks the slow micro-oxygenation that barrels provide — something oak chips and staves cannot replicate.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">over-oaked</div>
-  <div class="lp-grape-body">A pejorative tasting term used when oak-derived flavours dominate and overwhelm the wine's fruit character. Vanilla, toast, coconut, or smoke notes are so pronounced that the grape variety and terroir are obscured. Typically a result of excessive new oak usage, too long a time in barrel, or the use of low-quality fruit that lacks the concentration to absorb oak influence without losing its identity. A well-oaked wine integrates its oak seamlessly; an over-oaked wine does not.</div>
+  <div class="lp-grape-body">A pejorative tasting term used when oak-derived flavours dominate and overwhelm the wine's fruit character. Vanilla, toast, coconut, or smoke notes are so pronounced that the grape variety and terroir are obscured. A well-oaked wine integrates its oak seamlessly; an over-oaked wine does not.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">long-term storage</div>
-  <div class="lp-grape-body">Wines sealed with a natural cork should be stored with bottles laying on their side. This keeps the cork in constant contact with the wine, preventing it from drying out and shrinking. A dry cork allows air to enter the bottle, leading to premature oxidation and spoilage. Horizontal storage in a cool, dark, vibration-free environment at consistent temperature — ideally between 12–14°C — is the standard condition for ageing wines over the long term.</div>
+  <div class="lp-grape-body">Bottles laying on their side when sealed with a cork — keeps the cork moist preventing oxidation.</div>
 </div>
+
+</div>
+</div>
+
+<div class="v-accordion">
+<div class="v-acc-trigger" onclick="toggleAcc(this)" style="border-bottom:1px solid #3A3330;">
+  <span style="font-size:11px;letter-spacing:0.18em;color:#8C7B74;text-transform:lowercase;">tasting &amp; assessment</span>
+  <span class="arr" style="color:#8C7B74;">▼</span>
+</div>
+<div class="v-acc-body">
 
 <div class="lp-grape">
   <div class="lp-grape-name">primary aromas</div>
-  <div class="lp-grape-body">Aromas that originate directly from the grape variety itself. These are the most immediate and fruit-forward notes detected on the nose — fruit (red, black, stone, citrus, tropical), floral, herbal, and vegetal characters. Primary aromas reflect the grape's intrinsic aromatic profile and are most vivid in young wines, before vinification or ageing add further complexity. They are the first layer of the aroma framework used in systematic tasting.</div>
+  <div class="lp-grape-body">Come from the fruit.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">secondary aromas</div>
-  <div class="lp-grape-body">Aromas derived from the winemaking process rather than the grape itself. The three main sources of secondary aromas are yeast (bread, biscuit, brioche, lees), malolactic conversion (butter, cream, cheese), and oak (vanilla, smoke, cedar, chocolate, coffee). Secondary aromas build a layer of complexity on top of the primary fruit and are shaped by the choices the winemaker makes in the cellar.</div>
+  <div class="lp-grape-body">Come from vinification techniques.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">tertiary aromas</div>
-  <div class="lp-grape-body">Aromas that develop through bottle ageing over time, as a result of slow chemical reactions in a low-oxygen environment. In red wines, tertiary aromas include leather, earth, mushroom, tobacco, dried fruit, and forest floor. In white wines they include petrol, honey, ginger, nutmeg, almond, and hazelnut. Tertiary aromas indicate development and are a key marker of age and quality potential in the WSET Level 2 tasting framework.</div>
+  <div class="lp-grape-body">Come from aging in bottle.</div>
 </div>
-
-<div class="lp-divider"></div>
-<div class="lp-section-title">tasting & assessment</div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">tannins</div>
-  <div class="lp-grape-body">Polyphenolic compounds found primarily in grape skins, seeds, and stems — and also contributed by oak barrels. Tannins create a drying, grippy, or astringent sensation on the gums and inside of the cheek. They act as natural antioxidants and preservatives, and are essential to the structure and ageing potential of red wines. As a wine ages, tannins polymerise and soften, which is why a young tannic red can become silky and complex over time in the bottle.</div>
+  <div class="lp-grape-body">Polyphenolic compounds found primarily in grape skins, seeds, and stems — and also contributed by oak barrels. Tannins create a drying, grippy, or astringent sensation on the gums and inside of the cheek. They act as natural antioxidants and preservatives, and are essential to the structure and ageing potential of red wines.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">tannic</div>
-  <div class="lp-grape-body">A tasting descriptor used when tannins are a dominant or particularly noticeable characteristic of a wine. A wine described as tannic has pronounced drying grip on the palate. This is not inherently a flaw — in a young, structured red with good fruit concentration, high tannin is a sign of ageing potential. Tannin level is closely linked to grape variety and skin thickness: thick-skinned varieties such as <a href="#" onclick="showLesson(5);return false;">cabernet sauvignon</a> and <a href="#" onclick="showLesson(7);return false;">nebbiolo</a> typically produce the most tannic wines.</div>
+  <div class="lp-grape-body">A tasting descriptor used when tannins are a dominant or particularly noticeable characteristic of a wine. Not inherently a flaw — in a young, structured red with good fruit concentration, high tannin is a sign of ageing potential. Most prominent in thick-skinned varieties such as <a href="#" onclick="showLesson(5);return false;">cabernet sauvignon</a> and <a href="#" onclick="showLesson(7);return false;">nebbiolo</a>.</div>
 </div>
 
 <div class="lp-grape">
   <div class="lp-grape-name">quality potential</div>
-  <div class="lp-grape-body">An evaluative judgement applied to a grape, vintage, vineyard, or finished wine regarding how good it could become over time. A wine with high quality potential displays the structural components necessary for development — sufficient acidity, ripe tannins, fruit concentration, and balance — and is expected to improve and grow more complex with bottle ageing. In the WSET framework, quality potential is assessed alongside the BLIC criteria: balance, length, intensity, and complexity.</div>
+  <div class="lp-grape-body">An evaluative judgement applied to a grape, vintage, vineyard, or finished wine regarding how good it could become over time. A wine with high quality potential displays the structural components necessary for development — sufficient acidity, ripe tannins, fruit concentration, and balance. In the WSET framework, quality potential is assessed alongside the BLIC criteria: balance, length, intensity, and complexity.</div>
+</div>
+</div>
 </div>
 `
   }
