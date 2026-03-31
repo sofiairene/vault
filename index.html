@@ -30,10 +30,10 @@ textarea.v-input { border: 1px solid #e0e0e0; padding: 10px; resize: none; min-h
 textarea.v-input:focus { border-color: #333; }
 textarea.v-input::placeholder { color: #ccc; }
 .v-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-.v-type-opts { display: flex; gap: 7px; flex-wrap: wrap; }
-.v-type-btn { border: 1px solid #ddd; padding: 7px 14px; font-family: 'Courier New', Courier, monospace; font-size: 15px; color: #333; cursor: pointer; transition: all 0.12s; background: none; user-select: none; touch-action: manipulation; }
-.v-type-btn:hover { border-color: #777; }
-.v-type-btn.selected { background: #333; color: #fff; border-color: #333; }
+.v-type-opts { display: flex; gap: 0; flex-wrap: wrap; border-bottom: 1px solid #ebebeb; margin-bottom: 1.2rem; }
+.v-type-btn { border: none; padding: 0.5rem 0; margin-right: 1.4rem; font-family: 'Courier New', Courier, monospace; font-size: 14px; color: #bbb; cursor: pointer; transition: all 0.15s; background: none; user-select: none; touch-action: manipulation; border-bottom: 2px solid transparent; margin-bottom: -1px; letter-spacing: 0.04em; }
+.v-type-btn:hover { color: #555; }
+.v-type-btn.selected { color: #333; border-bottom: 2px solid #333; }
 .v-color-opts { display: flex; gap: 10px; flex-wrap: wrap; padding-top: 0.3rem; }
 .v-color-swatch { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; user-select: none; touch-action: manipulation; }
 .v-swatch-circle { width: 32px; height: 32px; border-radius: 50%; border: 2px solid transparent; transition: all 0.15s; }
@@ -52,7 +52,21 @@ textarea.v-input::placeholder { color: #ccc; }
 .v-acc-body.open { display: block; }
 .v-divider { border: none; border-top: 1px solid #ebebeb; margin: 1.3rem 0; }
 .v-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.v-chip { border: 1px solid #ddd; padding: 5px 11px; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #333; cursor: pointer; transition: all 0.15s; user-select: none; background: none; touch-action: manipulation; }
+/* primary aromas two-layer */
+.pa-tabs { display: flex; flex-wrap: wrap; gap: 0; border-bottom: 1px solid #e0e0e0; margin-bottom: 0; }
+.pa-tab { font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #bbb; cursor: pointer; padding: 0.45rem 0; margin-right: 1.1rem; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; user-select: none; touch-action: manipulation; letter-spacing: 0.03em; }
+.pa-tab:hover { color: #555; }
+.pa-tab.selected { color: #333; border-bottom-color: #333; }
+.pa-tab.solo { color: #bbb; }
+.pa-tab.solo.selected { color: #333; border-bottom-color: #333; }
+.pa-panel { min-height: 52px; padding: 0.8rem 0 0.5rem; margin-bottom: 0.5rem; }
+.pa-panel-label { font-size: 10px; color: #bbb; letter-spacing: 0.12em; text-transform: lowercase; margin-bottom: 0.6rem; display: none; }
+.pa-subs { display: flex; flex-wrap: wrap; gap: 6px; }
+.pa-sub { border: 1px solid #ddd; padding: 4px 10px; font-family: 'Courier New', Courier, monospace; font-size: 12px; color: #555; cursor: pointer; transition: all 0.12s; user-select: none; background: none; touch-action: manipulation; }
+.pa-sub:hover { border-color: #777; }
+.pa-sub.selected { background: #333; color: #fff; border-color: #333; }
+
+/* keep existing chip styles for sec/tert */ padding: 5px 11px; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #333; cursor: pointer; transition: all 0.15s; user-select: none; background: none; touch-action: manipulation; }
 .v-chip:hover { border-color: #777; }
 .v-chip.selected { background: #333; color: #fff; border-color: #333; }
 .v-chip.dimmed { opacity: 0.2; }
@@ -102,7 +116,6 @@ textarea.v-input::placeholder { color: #ccc; }
 
 @media (max-width: 400px) {
   .vault { padding: 1.2rem 1rem 4rem; }
-  .v-type-btn { padding: 7px 10px; font-size: 14px; }
   .v-blic-grid { gap: 0.5rem; }
   .v-blic-btn { font-size: 15px; padding: 8px 0; }
   .v-blic-lbl { font-size: 9px; }
@@ -327,9 +340,13 @@ textarea.v-input::placeholder { color: #ccc; }
   <!-- 2. NOSE -->
   <div class="v-screen" id="s1">
     <div class="v-screen-title">nose</div>
-    <div class="v-label" style="margin-bottom:0.8rem;">primary aromas</div>
-    <div class="v-chips" id="primary-chips"></div>
-    <div id="sub-wrap"></div>
+    <div class="v-label" style="margin-bottom:0.6rem;">primary aromas</div>
+
+    <div class="pa-tabs" id="pa-tabs"></div>
+    <div class="pa-panel" id="pa-panel">
+      <div class="pa-panel-label" id="pa-panel-label"></div>
+      <div class="pa-subs" id="pa-subs"></div>
+    </div>
     <div class="v-divider"></div>
     <div class="v-accordion">
       <div class="v-acc-trigger" onclick="toggleAcc(this)">
@@ -606,7 +623,6 @@ const primaryData = [
   {cat:'candy',         subs:[]}
 ];
 
-const chipRefs = [];
 
 function selectType(btn, type) {
   wineType = type;
@@ -647,36 +663,71 @@ function updateResult() {
 
 function applyDimFilter(type) {
   const tooDim = dimMap[type] || [];
-  chipRefs.forEach(({cat, chip}) => chip.classList.toggle('dimmed', tooDim.includes(cat)));
+  document.querySelectorAll('.pa-tab').forEach(tab => {
+    const cat = tab.dataset.cat;
+    if (tooDim.includes(cat)) {
+      tab.style.opacity = '0.25';
+    } else {
+      tab.style.opacity = '1';
+    }
+  });
 }
 
 function buildPrimary() {
-  const pWrap = document.getElementById('primary-chips');
-  const sWrap = document.getElementById('sub-wrap');
-  primaryData.forEach(({cat, subs}) => {
-    const chip = document.createElement('div');
-    chip.className = 'v-chip';
-    chip.textContent = cat;
-    pWrap.appendChild(chip);
-    chipRefs.push({cat, chip});
-    if (subs.length > 0) {
-      const subRow = document.createElement('div');
-      subRow.className = 'v-sub-row';
-      subs.forEach(s => {
-        const sc = document.createElement('div');
-        sc.className = 'v-chip sub';
-        sc.textContent = s;
-        sc.onclick = () => sc.classList.toggle('selected');
-        subRow.appendChild(sc);
+  const tabs   = document.getElementById('pa-tabs');
+  const panel  = document.getElementById('pa-panel');
+  const label  = document.getElementById('pa-panel-label');
+  const subs   = document.getElementById('pa-subs');
+  const solos  = ['liquorice','wet stones','candy'];
+  let activeTab = null;
+  const selectedSubs = {}; // cat -> Set of selected sub names
+
+  primaryData.forEach(({cat, subs: subList}) => {
+    const tab = document.createElement('div');
+    tab.className = 'pa-tab' + (solos.includes(cat) ? ' solo' : '');
+    tab.textContent = cat;
+    tab.dataset.cat = cat;
+
+    tab.addEventListener('click', () => {
+      if (solos.includes(cat)) {
+        tab.classList.toggle('selected');
+        return;
+      }
+      // deactivate previous active tab highlight (keep selected state)
+      if (activeTab && activeTab !== tab) activeTab.style.fontStyle = '';
+      activeTab = tab;
+      tab.classList.add('selected');
+
+      // update panel
+      label.textContent = cat;
+      label.style.display = 'block';
+      subs.innerHTML = '';
+
+      if (!selectedSubs[cat]) selectedSubs[cat] = new Set();
+
+      subList.forEach(s => {
+        const chip = document.createElement('div');
+        chip.className = 'pa-sub' + (selectedSubs[cat].has(s) ? ' selected' : '');
+        chip.textContent = s;
+        chip.addEventListener('click', () => {
+          chip.classList.toggle('selected');
+          if (chip.classList.contains('selected')) {
+            selectedSubs[cat].add(s);
+          } else {
+            selectedSubs[cat].delete(s);
+          }
+          // update tab selected state: selected if any sub chosen
+          if (selectedSubs[cat].size > 0) {
+            tab.classList.add('selected');
+          } else {
+            tab.classList.remove('selected');
+          }
+        });
+        subs.appendChild(chip);
       });
-      chip.addEventListener('click', () => {
-        chip.classList.toggle('selected');
-        subRow.classList.toggle('open', chip.classList.contains('selected'));
-      });
-      sWrap.appendChild(subRow);
-    } else {
-      chip.onclick = () => chip.classList.toggle('selected');
-    }
+    });
+
+    tabs.appendChild(tab);
   });
 }
 
